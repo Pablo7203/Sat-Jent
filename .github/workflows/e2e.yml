@@ -1,0 +1,39 @@
+name: End-to-end tests
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  playwright:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Start local Supabase
+        run: pnpm db:start
+      - name: Configure isolated local test environment
+        shell: bash
+        run: |
+          eval "$(pnpm exec supabase status -o env)"
+          {
+            echo "NEXT_PUBLIC_SUPABASE_URL=$API_URL"
+            echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$ANON_KEY"
+            echo "NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000"
+            echo "NEXT_PUBLIC_APP_ENV=test"
+            echo "SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
+            echo "E2E_ACTIVE_PASSWORD=Local-test-password-42!"
+            echo "E2E_INACTIVE_PASSWORD=Local-test-password-43!"
+          } > .env.local
+      - run: pnpm test:e2e:setup
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e

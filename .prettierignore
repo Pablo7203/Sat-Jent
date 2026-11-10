@@ -1,0 +1,12 @@
+.next
+coverage
+node_modules
+playwright-report
+test-results
+pnpm-lock.yaml
+**/*.sql
+supabase/.temp/
+.env*
+next-env.d.ts
+*.tsbuildinfo
+.vscode/

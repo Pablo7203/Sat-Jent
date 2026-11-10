@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1560" viewBox="0 0 2200 1560" role="img" aria-labelledby="title desc">
+  <title id="title">SAT-J Ent database entity relationship diagram</title>
+  <desc id="desc">A grouped ERD of the SAT-J Supabase database showing identity, catalogue, inventory and costing, purchasing, sales, transfers, public quotations, and finance entities and their principal relationships.</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#172b3b" flood-opacity=".08"/></filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#72889a"/></marker>
+    <style>
+      text{font-family:Inter,Segoe UI,Arial,sans-serif;fill:#182b3a}.title{font-size:42px;font-weight:700;letter-spacing:-.7px}.subtitle{font-size:18px;fill:#647789}.section{font-size:16px;font-weight:700;letter-spacing:2px;fill:#63778a}.entity{font-size:18px;font-weight:700}.field{font-size:14px;fill:#506477}.tag{font-size:11px;font-weight:700;letter-spacing:.7px;fill:#fff}.relation{font-size:13px;font-weight:600;fill:#5b7081}.small{font-size:13px;fill:#637789}
+    </style>
+  </defs>
+  <rect width="2200" height="1560" fill="#f4f7f9"/>
+  <rect x="0" y="0" width="2200" height="150" fill="#fff"/>
+  <text x="74" y="73" class="title">SAT-J Ent · Database ERD</text>
+  <text x="76" y="111" class="subtitle">Core Supabase entities and declared foreign-key relationships · grouped by business domain</text>
+  <g transform="translate(1785 55)"><rect width="340" height="48" rx="24" fill="#e7eef3"/><circle cx="25" cy="24" r="6" fill="#365b70"/><text x="43" y="30" class="small">PK primary key</text><circle cx="178" cy="24" r="6" fill="#66806f"/><text x="196" y="30" class="small">FK foreign key</text></g>
+
+  <!-- domain panels -->
+  <g filter="url(#shadow)"><rect x="54" y="190" width="650" height="330" rx="20" fill="#fff"/><rect x="728" y="190" width="1418" height="330" rx="20" fill="#fff"/>
+    <rect x="54" y="548" width="1030" height="430" rx="20" fill="#fff"/><rect x="1108" y="548" width="1038" height="430" rx="20" fill="#fff"/>
+    <rect x="54" y="1006" width="1030" height="470" rx="20" fill="#fff"/><rect x="1108" y="1006" width="1038" height="470" rx="20" fill="#fff"/></g>
+  <text x="82" y="230" class="section">01 · IDENTITY &amp; ACCESS</text>
+  <text x="756" y="230" class="section">02 · PRODUCT CATALOGUE</text>
+  <text x="82" y="588" class="section">03 · INVENTORY &amp; COSTING</text>
+  <text x="1136" y="588" class="section">04 · PURCHASING &amp; RECEIVING</text>
+  <text x="82" y="1046" class="section">05 · SALES &amp; DAILY BATCHES</text>
+  <text x="1136" y="1046" class="section">06 · TRANSFERS, FINANCE &amp; PUBLIC QUOTES</text>
+
+  <!-- identity cards -->
+  <g>
+    <rect x="82" y="258" width="180" height="94" rx="12" fill="#edf3f6" stroke="#d5e0e7"/><text x="100" y="288" class="entity">AUTH_USERS</text><text x="100" y="319" class="field">PK · id</text>
+    <rect x="292" y="258" width="180" height="94" rx="12" fill="#edf3f6" stroke="#d5e0e7"/><text x="310" y="288" class="entity">PROFILES</text><text x="310" y="319" class="field">PK/FK · id</text>
+    <rect x="502" y="258" width="170" height="94" rx="12" fill="#edf3f6" stroke="#d5e0e7"/><text x="520" y="288" class="entity">ROLES</text><text x="520" y="319" class="field">PK · id</text>
+    <path d="M262 305 H292" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><text x="264" y="293" class="relation">1:0..1</text>
+    <path d="M472 305 H502" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><text x="474" y="293" class="relation">role</text>
+    <rect x="292" y="382" width="180" height="94" rx="12" fill="#edf3f6" stroke="#d5e0e7"/><text x="310" y="412" class="entity">USER_BRANCHES</text><text x="310" y="443" class="field">PK/FK · user_id</text><text x="310" y="462" class="field">PK/FK · branch_id</text>
+    <rect x="502" y="382" width="170" height="94" rx="12" fill="#edf3f6" stroke="#d5e0e7"/><text x="520" y="412" class="entity">BRANCHES</text><text x="520" y="443" class="field">PK · id</text>
+    <path d="M382 352 V382" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><text x="392" y="372" class="relation">1:many</text>
+    <path d="M472 429 H502" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><text x="474" y="417" class="relation">membership</text>
+    <text x="82" y="495" class="small">ROLE_PERMISSIONS links ROLES ↔ PERMISSIONS; AUDIT_LOGS records actor and optional branch context.</text>
+  </g>
+
+  <!-- catalogue -->
+  <g>
+    <rect x="756" y="258" width="205" height="94" rx="12" fill="#eaf2ee" stroke="#d2e2d8"/><text x="774" y="288" class="entity">CATEGORIES</text><text x="774" y="319" class="field">PK · id · parent_id FK</text>
+    <rect x="996" y="258" width="205" height="94" rx="12" fill="#eaf2ee" stroke="#d2e2d8"/><text x="1014" y="288" class="entity">PRODUCTS</text><text x="1014" y="319" class="field">PK · id · category_id FK</text><text x="1014" y="338" class="field">product_type_id FK · optional</text>
+    <rect x="1236" y="258" width="205" height="94" rx="12" fill="#eaf2ee" stroke="#d2e2d8"/><text x="1254" y="288" class="entity">PRODUCT_VARIANTS</text><text x="1254" y="319" class="field">PK · id · product_id FK</text>
+    <rect x="1476" y="258" width="205" height="94" rx="12" fill="#eaf2ee" stroke="#d2e2d8"/><text x="1494" y="288" class="entity">PRODUCT_PRICES</text><text x="1494" y="319" class="field">PK · id · variant_id FK</text><text x="1494" y="338" class="field">branch_id FK · optional</text>
+    <rect x="1716" y="258" width="205" height="94" rx="12" fill="#eaf2ee" stroke="#d2e2d8"/><text x="1734" y="288" class="entity">PRODUCT_IMAGES</text><text x="1734" y="319" class="field">PK · id · product_id FK</text><text x="1734" y="338" class="field">variant_id FK · optional</text>
+    <path d="M961 305 H996" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><path d="M1201 305 H1236" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><path d="M1441 305 H1476" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><path d="M1201 332 C1430 410 1580 410 1716 332" fill="none" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="963" y="292" class="relation">1:many</text><text x="1203" y="292" class="relation">1:many</text><text x="1443" y="292" class="relation">1:many</text><text x="1470" y="396" class="relation">product images</text>
+    <rect x="756" y="390" width="1388" height="86" rx="12" fill="#f5f8f6" stroke="#e0e9e3"/>
+    <text x="780" y="421" class="entity">ATTRIBUTE MODEL</text><text x="780" y="450" class="field">ATTRIBUTES ↔ CATEGORY_ATTRIBUTES ↔ CATEGORIES · ATTRIBUTE_VALUES belong to an ATTRIBUTE · VARIANT_ATTRIBUTE_VALUES connect VARIANTS to attribute/value choices</text>
+    <rect x="1847" y="405" width="270" height="48" rx="10" fill="#d9e8df"/><text x="1870" y="435" class="field">BRANDS · UNITS_OF_MEASURE · PRODUCT_TYPES</text>
+  </g>
+
+  <!-- inventory -->
+  <g>
+    <rect x="82" y="616" width="220" height="100" rx="12" fill="#edf3f6" stroke="#d5e0e7"/><text x="100" y="648" class="entity">BRANCH_INVENTORY</text><text x="100" y="679" class="field">branch_id + variant_id</text><text x="100" y="700" class="field">quantity_on_hand</text>
+    <rect x="358" y="616" width="220" height="100" rx="12" fill="#edf3f6" stroke="#d5e0e7"/><text x="376" y="648" class="entity">STOCK_MOVEMENTS</text><text x="376" y="679" class="field">PK · id · branch_id FK</text><text x="376" y="700" class="field">variant_id FK · quantity_delta</text>
+    <rect x="634" y="616" width="220" height="100" rx="12" fill="#edf3f6" stroke="#d5e0e7"/><text x="652" y="648" class="entity">INVENTORY_COST_EVENTS</text><text x="652" y="679" class="field">stock_movement_id FK</text><text x="652" y="700" class="field">branch_id + variant_id FK</text>
+    <rect x="82" y="758" width="220" height="100" rx="12" fill="#edf3f6" stroke="#d5e0e7"/><text x="100" y="790" class="entity">STOCK_ADJUSTMENTS</text><text x="100" y="821" class="field">branch_id FK · reason_id FK</text><text x="100" y="842" class="field">has adjustment items</text>
+    <rect x="358" y="758" width="220" height="100" rx="12" fill="#edf3f6" stroke="#d5e0e7"/><text x="376" y="790" class="entity">STOCK_COUNTS</text><text x="376" y="821" class="field">branch_id FK</text><text x="376" y="842" class="field">has count items</text>
+    <rect x="634" y="758" width="220" height="100" rx="12" fill="#eaf2ee" stroke="#d2e2d8"/><text x="652" y="790" class="entity">BRANCH_INVENTORY_COSTS</text><text x="652" y="821" class="field">branch_id + variant_id</text><text x="652" y="842" class="field">WAC · explicit cost status</text>
+    <path d="M302 666 H358" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><path d="M578 666 H634" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><path d="M744 716 V758" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M302 808 C326 808 334 700 358 700" fill="none" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><path d="M578 808 C606 808 608 710 634 700" fill="none" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="82" y="900" class="field">STOCK_ADJUSTMENT_ITEMS and STOCK_COUNT_ITEMS link documents to PRODUCT_VARIANTS and resulting movements.</text>
+    <text x="82" y="930" class="field">Weighted-average cost and unknown-cost state are tracked for each branch × variant.</text>
+  </g>
+
+  <!-- purchasing -->
+  <g>
+    <rect x="1136" y="616" width="190" height="100" rx="12" fill="#f7f0e8" stroke="#eadcc9"/><text x="1154" y="648" class="entity">SUPPLIERS</text><text x="1154" y="679" class="field">PK · id</text>
+    <rect x="1360" y="616" width="190" height="100" rx="12" fill="#f7f0e8" stroke="#eadcc9"/><text x="1378" y="648" class="entity">PURCHASES</text><text x="1378" y="679" class="field">supplier_id FK</text><text x="1378" y="700" class="field">branch_id FK</text>
+    <rect x="1584" y="616" width="190" height="100" rx="12" fill="#f7f0e8" stroke="#eadcc9"/><text x="1602" y="648" class="entity">PURCHASE_ITEMS</text><text x="1602" y="679" class="field">purchase_id FK</text><text x="1602" y="700" class="field">variant_id FK</text>
+    <rect x="1808" y="616" width="290" height="100" rx="12" fill="#f7f0e8" stroke="#eadcc9"/><text x="1826" y="648" class="entity">GOODS_RECEIPTS → ITEMS</text><text x="1826" y="679" class="field">purchase_id FK · branch_id FK</text><text x="1826" y="700" class="field">receipt lines post stock movements</text>
+    <path d="M1326 666 H1360" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><path d="M1550 666 H1584" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><path d="M1774 666 H1808" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="1136" y="766" width="300" height="100" rx="12" fill="#f7f0e8" stroke="#eadcc9"/><text x="1154" y="798" class="entity">SUPPLIER_PAYMENTS</text><text x="1154" y="829" class="field">supplier_id · purchase_id? · branch_id</text><text x="1154" y="850" class="field">account link added for finance ledger</text>
+    <path d="M1455 716 C1455 750 1300 735 1300 766" fill="none" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><text x="1392" y="747" class="relation">settles payable</text>
+    <text x="1480" y="813" class="field">Receiving links GOODS_RECEIPT_ITEMS to the originating PURCHASE_ITEMS, variant, and STOCK_MOVEMENT.</text>
+    <text x="1480" y="842" class="field">Goods receipt quantity and actual unit cost feed inventory quantity and WAC.</text>
+  </g>
+
+  <!-- sales -->
+  <g>
+    <rect x="82" y="1074" width="190" height="100" rx="12" fill="#eaf2ee" stroke="#d2e2d8"/><text x="100" y="1106" class="entity">CUSTOMERS</text><text x="100" y="1137" class="field">PK · id</text>
+    <rect x="306" y="1074" width="190" height="100" rx="12" fill="#eaf2ee" stroke="#d2e2d8"/><text x="324" y="1106" class="entity">SALES</text><text x="324" y="1137" class="field">customer_id · branch_id FK</text>
+    <rect x="530" y="1074" width="210" height="100" rx="12" fill="#eaf2ee" stroke="#d2e2d8"/><text x="548" y="1106" class="entity">SALE_ITEMS</text><text x="548" y="1137" class="field">sale_id · variant_id FK</text><text x="548" y="1158" class="field">cost snapshot/status</text>
+    <rect x="774" y="1074" width="260" height="100" rx="12" fill="#eaf2ee" stroke="#d2e2d8"/><text x="792" y="1106" class="entity">CUSTOMER_PAYMENTS</text><text x="792" y="1137" class="field">sale_id · customer_id FK</text><text x="792" y="1158" class="field">financial_account_id FK</text>
+    <path d="M272 1124 H306" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><path d="M496 1124 H530" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><path d="M740 1124 H774" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="82" y="1222" width="300" height="100" rx="12" fill="#eaf2ee" stroke="#d2e2d8"/><text x="100" y="1254" class="entity">DAILY_SALES_BATCHES</text><text x="100" y="1285" class="field">branch_id FK · correction/replacement</text><text x="100" y="1306" class="field">has batch item rows</text>
+    <rect x="416" y="1222" width="324" height="100" rx="12" fill="#eaf2ee" stroke="#d2e2d8"/><text x="434" y="1254" class="entity">DAILY_SALES_BATCH_ITEMS</text><text x="434" y="1285" class="field">batch_id · variant_id FK</text><text x="434" y="1306" class="field">stock movement + cost snapshot</text>
+    <path d="M382 1272 H416" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="82" y="1380" class="field">Both sale paths reduce inventory through STOCK_MOVEMENTS; unknown historical COGS stays explicitly unvalued.</text>
+    <text x="82" y="1410" class="field">Payments post financial movements through an assigned financial account.</text>
+  </g>
+
+  <!-- transfer, finance, public -->
+  <g>
+    <rect x="1136" y="1074" width="300" height="100" rx="12" fill="#edf3f6" stroke="#d5e0e7"/><text x="1154" y="1106" class="entity">STOCK_TRANSFERS</text><text x="1154" y="1137" class="field">source_branch_id · destination_branch_id</text><text x="1154" y="1158" class="field">transfer items link variant + stock moves</text>
+    <rect x="1470" y="1074" width="290" height="100" rx="12" fill="#edf3f6" stroke="#d5e0e7"/><text x="1488" y="1106" class="entity">FINANCIAL_ACCOUNTS</text><text x="1488" y="1137" class="field">many-to-many with BRANCHES</text><text x="1488" y="1158" class="field">via FINANCIAL_ACCOUNT_BRANCHES</text>
+    <rect x="1794" y="1074" width="304" height="100" rx="12" fill="#edf3f6" stroke="#d5e0e7"/><text x="1812" y="1106" class="entity">FINANCIAL_MOVEMENTS</text><text x="1812" y="1137" class="field">account_id · branch_id FK</text><text x="1812" y="1158" class="field">polymorphic reference to source</text>
+    <path d="M1760 1124 H1794" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="1136" y="1222" width="290" height="100" rx="12" fill="#edf3f6" stroke="#d5e0e7"/><text x="1154" y="1254" class="entity">EXPENSES</text><text x="1154" y="1285" class="field">branch_id · category_id FK</text><text x="1154" y="1306" class="field">has expense payment rows</text>
+    <rect x="1460" y="1222" width="300" height="100" rx="12" fill="#edf3f6" stroke="#d5e0e7"/><text x="1478" y="1254" class="entity">EXPENSE_PAYMENTS</text><text x="1478" y="1285" class="field">expense · branch · account FK</text><text x="1478" y="1306" class="field">posts outgoing ledger movement</text>
+    <path d="M1426 1272 H1460" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/><path d="M1610 1222 C1740 1188 1810 1190 1900 1174" fill="none" stroke="#72889a" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="1794" y="1222" width="304" height="100" rx="12" fill="#f6f1e8" stroke="#eadfcf"/><text x="1812" y="1254" class="entity">PUBLIC QUOTATIONS</text><text x="1812" y="1285" class="field">QUOTATION_REQUESTS</text><text x="1812" y="1306" class="field">→ QUOTATION_REQUEST_ITEMS → PRODUCTS</text>
+    <rect x="1136" y="1360" width="962" height="62" rx="12" fill="#fff5e6" stroke="#f0dfc4"/><text x="1158" y="1386" class="field">FINANCIAL_RECONCILIATIONS and FINANCIAL_ACCOUNT_OPENINGS are branch/account scoped. Ledger reference_id is polymorphic (no FK).</text><text x="1158" y="1407" class="small">Public-site settings and document-number sequence tables are intentionally omitted from the core relationship view.</text>
+  </g>
+
+  <text x="74" y="1525" class="small">Source: SAT-J Supabase migrations · Diagram focuses on core domain relationships, not every column, constraint, policy, or helper table.</text>
+</svg>

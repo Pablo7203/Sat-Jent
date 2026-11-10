@@ -1,0 +1,2 @@
+-- Phase 0 intentionally contains no business seed data.
+-- Add deterministic development data here only when a later phase requires it.

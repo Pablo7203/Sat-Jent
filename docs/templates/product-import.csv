@@ -1,0 +1,2 @@
+name,slug,category,brand,unit_code,variant_name,sku,barcode,cost_price,retail_price,wholesale_price,is_public,show_price_online
+REPLACE_WITH_APPROVED_NAME,replace-with-approved-slug,APPROVED_CATEGORY,APPROVED_BRAND,PCS,Standard,UNIQUE-SKU,,0,0,0,false,false
