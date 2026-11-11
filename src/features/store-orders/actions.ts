@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requirePermission } from "@/lib/auth/authorization";
 import { createClient } from "@/lib/supabase/server";
+import { sendCustomerOrderEmail } from "@/lib/email/customer-order-notifications";
 
 const idSchema = z.string().uuid();
 
@@ -53,6 +54,13 @@ export async function updateStoreOrderFulfillment(formData: FormData) {
 
   await requirePermission("store_orders.update");
   const db = await createClient();
+  const { data: order } = await db
+    .from("store_order_requests")
+    .select(
+      "request_number,order_kind,customer_name,customer_email,estimated_total,payment_method,payment_status,fulfillment_method,fulfillment_status",
+    )
+    .eq("id", id.data)
+    .maybeSingle();
   const { error } = await db.rpc("update_store_checkout_fulfillment", {
     target_order: id.data,
     target_status: status.data,
@@ -61,6 +69,32 @@ export async function updateStoreOrderFulfillment(formData: FormData) {
 
   if (error) {
     redirect("/app/store-orders/" + id.data + "?error=fulfillment");
+  }
+
+  if (
+    order?.order_kind === "CHECKOUT" &&
+    order.customer_email &&
+    order.fulfillment_status !== status.data
+  ) {
+    await sendCustomerOrderEmail({
+      kind: "fulfillment-update",
+      orderId: id.data,
+      to: order.customer_email,
+      customerName: order.customer_name,
+      orderNumber: order.request_number,
+      total: order.estimated_total,
+      paymentMethod:
+        order.payment_method === "PAYSTACK" ? "PAYSTACK" : "PAY_ON_DELIVERY",
+      paymentStatus:
+        cashCollected && status.data === "DELIVERED"
+          ? "PAID"
+          : order.payment_status === "PAID"
+            ? "PAID"
+            : "PENDING",
+      fulfillmentMethod:
+        order.fulfillment_method === "DELIVERY" ? "DELIVERY" : "PICKUP",
+      status: status.data,
+    });
   }
 
   revalidatePath("/app/store-orders");

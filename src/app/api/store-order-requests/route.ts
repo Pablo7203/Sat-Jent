@@ -13,6 +13,7 @@ import {
 } from "@/lib/env/server";
 import { isPublicWebsiteEnabled } from "@/lib/public-site-switch";
 import { publicSiteUrlForRequest } from "@/lib/env/site-url";
+import { sendCustomerOrderEmail } from "@/lib/email/customer-order-notifications";
 
 const checkoutSchema = z.object({
   idempotencyKey: z.string().uuid(),
@@ -278,6 +279,10 @@ export async function POST(request: NextRequest) {
     }
 
     const trackingUrl = "/track/" + input.trackingToken;
+    const absoluteTrackingUrl = publicSiteUrlForRequest(
+      trackingUrl,
+      request.nextUrl.origin,
+    );
     if (input.paymentMethod === "PAYSTACK" && order.payment_status === "PAID") {
       return NextResponse.json(
         { orderNumber: order.order_number, trackingUrl, alreadyPaid: true },
@@ -285,6 +290,19 @@ export async function POST(request: NextRequest) {
       );
     }
     if (input.paymentMethod === "PAY_ON_DELIVERY") {
+      await sendCustomerOrderEmail({
+        kind: "order-placed",
+        orderId: order.order_id,
+        to: input.email,
+        customerName: input.name,
+        orderNumber: order.order_number,
+        total: order.total,
+        paymentMethod: "PAY_ON_DELIVERY",
+        paymentStatus: "PENDING",
+        fulfillmentMethod: input.fulfillmentMethod,
+        deliveryAddress: input.deliveryAddress || undefined,
+        trackingUrl: absoluteTrackingUrl,
+      });
       return NextResponse.json(
         { orderNumber: order.order_number, trackingUrl },
         {
@@ -330,6 +348,20 @@ export async function POST(request: NextRequest) {
         activeAttempt.authorization_url &&
         isPaystackCheckoutUrl(activeAttempt.authorization_url)
       ) {
+        await sendCustomerOrderEmail({
+          kind: "payment-required",
+          orderId: order.order_id,
+          to: input.email,
+          customerName: input.name,
+          orderNumber: order.order_number,
+          total: order.total,
+          paymentMethod: "PAYSTACK",
+          paymentStatus: "PENDING",
+          fulfillmentMethod: input.fulfillmentMethod,
+          deliveryAddress: input.deliveryAddress || undefined,
+          paymentUrl: activeAttempt.authorization_url,
+          trackingUrl: absoluteTrackingUrl,
+        });
         return NextResponse.json(
           {
             orderNumber: order.order_number,
@@ -413,6 +445,7 @@ export async function POST(request: NextRequest) {
         !response.ok ||
         paystackResult.status !== true ||
         !paystackResult.data?.authorization_url ||
+        !isPaystackCheckoutUrl(paystackResult.data.authorization_url) ||
         paystackResult.data.reference !== reference
       ) {
         await admin
@@ -441,6 +474,21 @@ export async function POST(request: NextRequest) {
           { status: 503 },
         );
       }
+
+      await sendCustomerOrderEmail({
+        kind: "payment-required",
+        orderId: order.order_id,
+        to: input.email,
+        customerName: input.name,
+        orderNumber: order.order_number,
+        total: order.total,
+        paymentMethod: "PAYSTACK",
+        paymentStatus: "PENDING",
+        fulfillmentMethod: input.fulfillmentMethod,
+        deliveryAddress: input.deliveryAddress || undefined,
+        paymentUrl: paystackResult.data.authorization_url,
+        trackingUrl: absoluteTrackingUrl,
+      });
 
       return NextResponse.json(
         {

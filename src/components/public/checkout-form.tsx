@@ -299,6 +299,10 @@ export function CheckoutForm({ branches }: { branches: CheckoutBranch[] }) {
                 required={paymentMethod === "PAYSTACK"}
                 type="email"
               />
+              <span className="mt-2 block text-xs font-normal leading-5 text-[#696b64]">
+                Add an email to receive your order confirmation and delivery
+                updates. It’s required for online payment.
+              </span>
             </label>
             <label className="text-sm font-semibold">
               Company (optional)

@@ -6,6 +6,7 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getRequiredPaystackSecretKey } from "@/lib/env/server";
+import { sendCustomerOrderEmail } from "@/lib/email/customer-order-notifications";
 
 type PaymentAttempt = {
   id: string;
@@ -35,7 +36,9 @@ export async function verifyPaystackTransaction(
 
   const { data: orderData, error: orderError } = await admin
     .from("store_order_requests")
-    .select("request_number,order_kind,payment_method,payment_status")
+    .select(
+      "request_number,order_kind,payment_method,payment_status,customer_name,customer_email,estimated_total,fulfillment_method",
+    )
     .eq("id", attempt.order_id)
     .maybeSingle();
 
@@ -45,6 +48,10 @@ export async function verifyPaystackTransaction(
     order_kind: string;
     payment_method: string | null;
     payment_status: string;
+    customer_name: string;
+    customer_email: string | null;
+    estimated_total: number | string | null;
+    fulfillment_method: "PICKUP" | "DELIVERY" | null;
   };
 
   if (order.order_kind !== "CHECKOUT" || order.payment_method !== "PAYSTACK") {
@@ -130,6 +137,20 @@ export async function verifyPaystackTransaction(
 
   if (confirmError) {
     throw new Error("The verified payment could not be recorded.");
+  }
+
+  if (order.customer_email && order.fulfillment_method) {
+    await sendCustomerOrderEmail({
+      kind: "payment-confirmed",
+      orderId: attempt.order_id,
+      to: order.customer_email,
+      customerName: order.customer_name,
+      orderNumber: order.request_number,
+      total: order.estimated_total ?? Number(attempt.amount_pesewas) / 100,
+      paymentMethod: "PAYSTACK",
+      paymentStatus: "PAID",
+      fulfillmentMethod: order.fulfillment_method,
+    });
   }
 
   return {
