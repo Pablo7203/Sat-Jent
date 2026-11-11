@@ -385,8 +385,8 @@ export async function uploadProductImage(
   if (!productId.success || !(file instanceof File))
     return fail("Choose an image.");
   const imageType = await detectImageType(file);
-  if (!imageType || file.size > 5 * 1024 * 1024)
-    return fail("Use a JPG, PNG, WebP, or AVIF image up to 5 MB.");
+  if (!imageType || file.size > 4 * 1024 * 1024)
+    return fail("Use a JPG, PNG, WebP, or AVIF image up to 4 MB.");
   const s = await createClient();
   const path = `products/${productId.data}/${crypto.randomUUID()}.${imageType.extension}`;
   const { error: uploadError } = await s.storage

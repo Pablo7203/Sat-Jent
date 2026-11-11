@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // Keep uploads below Vercel's request cap with multipart overhead included.
+    serverActions: { bodySizeLimit: "4.25mb" },
+  },
   poweredByHeader: false,
   images: {
     // Local Supabase image URLs use loopback; staging uses the Supabase hostname.

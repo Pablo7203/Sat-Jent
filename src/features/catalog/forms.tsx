@@ -495,7 +495,7 @@ export function ProductImageForm({ productId }: { productId: string }) {
             {fileName ?? "Choose a product image"}
           </span>
           <span className="mt-1 text-xs text-muted-foreground">
-            JPG, PNG, WebP or AVIF, up to 5 MB
+            JPG, PNG, WebP or AVIF, up to 4 MB
           </span>
         </label>
         <input
