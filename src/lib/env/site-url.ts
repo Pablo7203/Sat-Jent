@@ -49,3 +49,42 @@ export function passwordSetupCallbackUrl(
     resolveSiteUrl(options),
   ).toString();
 }
+
+/**
+ * Uses the request host only when it is the configured site or this Vercel
+ * deployment. This keeps preview checkouts on their own return URL without
+ * accepting an arbitrary callback host from a public request.
+ */
+export function publicSiteUrlForRequest(
+  path: string,
+  requestOrigin: string,
+): string {
+  let requestUrl: URL;
+  try {
+    requestUrl = new URL(requestOrigin);
+  } catch {
+    return new URL(path, resolveSiteUrl()).toString();
+  }
+
+  const configuredSite = resolveSiteUrl();
+  if (requestUrl.origin === configuredSite.origin) {
+    return new URL(path, configuredSite).toString();
+  }
+
+  const deployment = process.env.VERCEL_URL?.trim();
+  if (deployment) {
+    const deploymentUrl = parseAbsoluteHttpUrl(
+      /^https?:\/\//i.test(deployment) ? deployment : "https://" + deployment,
+      "VERCEL_URL",
+    );
+    if (
+      requestUrl.hostname.toLowerCase() ===
+        deploymentUrl.hostname.toLowerCase() &&
+      requestUrl.protocol === "https:"
+    ) {
+      return new URL(path, requestUrl).toString();
+    }
+  }
+
+  return new URL(path, configuredSite).toString();
+}

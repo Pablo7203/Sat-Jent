@@ -6,7 +6,7 @@ import { publicBranches, siteConfig } from "@/lib/public-data";
 import { isPublicWebsiteEnabled } from "@/lib/public-site-switch";
 
 export const metadata: Metadata = {
-  title: "Send your order request",
+  title: "Checkout",
   robots: { index: false },
 };
 
@@ -22,14 +22,14 @@ export default async function CheckoutPage() {
       <main className="min-h-[70vh] bg-[#fbfaf7] px-4 py-12 text-[#20221f] sm:px-6 lg:px-10 lg:py-16">
         <div className="mx-auto max-w-[1200px]">
           <p className="text-xs font-semibold uppercase tracking-[.16em] text-[#aa4924]">
-            Order request
+            Secure checkout
           </p>
           <h1 className="public-editorial-title mt-3 text-5xl tracking-[-.04em] sm:text-6xl">
-            Almost ready.
+            Place your order.
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-6 text-[#696b64]">
-            Share the best way to reach you, and choose which of our three
-            branches should review your request.
+            Choose collection or delivery, then pay online with Paystack or pay
+            when your delivery arrives.
           </p>
           <div className="mt-8">
             <CheckoutForm
